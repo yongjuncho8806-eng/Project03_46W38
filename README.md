@@ -12,8 +12,9 @@ The core of the module is the WindResource class, which wraps the ERA5 dataset a
 
 The project follows a standard src-layout Python module structure.
 All core functionality is implemented inside the package wind_assess, located in:
-
+'''text
 src/wind_assess/
+
 
 The module contains three main files:
 
