@@ -10,12 +10,72 @@ The core of the module is the WindResource class, which wraps the ERA5 dataset a
 
 ## Module Architecture
 
-The project follows a standard src-layout Python module structure.
-All core functionality is implemented inside the package wind_assess, located in:
-```src/wind_assess/
+The project follows a standard *src-layout* Python module structure.
+All core functionality is implemented inside the package `wind_assess`, located in:
+
+```
+src/wind_assess/
 ```
 
 The module contains three main files:
+
+### **1. `core.py`**
+
+Defines the `WindResource` class, which loads ERA5 files and provides methods for:
+
+* parsing u/v components into wind speed and direction
+* spatial interpolation inside the 2×2 ERA5 grid
+* vertical wind extrapolation using power-law shear
+* Weibull distribution fitting
+* AEP calculation using turbine power curves
+
+### **2. `utils.py`**
+
+Contains helper functions:
+
+* loading power curve CSV files
+* plotting Weibull distributions
+* plotting wind roses
+
+### **3. `__init__.py`**
+
+Exposes the main class for easy import:
+
+```python
+from .core import WindResource
+```
+
+---
+
+### **Architecture Diagram**
+
+You can paste this directly into Markdown (works on GitHub):
+
+```mermaid
+graph TD
+    A[examples/main.py] --> B[wind_assess.core<br/>WindResource class]
+    A --> C[wind_assess.utils<br/>Helper functions]
+
+    B --> D[ERA5 NetCDF files<br/>(1997–2008)]
+    B --> E[Turbine power curves<br/>NREL 5MW & 15MW]
+
+    B --> F[Computed outputs<br/>Weibull params, AEP]
+    A --> G[Plots<br/>(Weibull, Wind Rose)]
+```
+
+---
+
+### **High-Level Data Flow**
+
+1. **`examples/main.py`** calls the `WindResource` class.
+2. `WindResource` loads ERA5 data using xarray.
+3. The class interpolates wind fields to the site (Horns Rev).
+4. The user chooses a height → wind is extrapolated if necessary.
+5. Weibull parameters are fitted from the time series.
+6. AEP is calculated from the power curve.
+7. Plots (Weibull + wind rose) are produced using functions in `utils.py`.
+
+---
 
 ## Repository structure
 
