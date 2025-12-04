@@ -39,20 +39,13 @@ Contains helper functions:
 
 ### **3. `__init__.py`**
 
-Exposes the main class for easy import:
-
-```python
-from .core import WindResource
-```
+Exposes the main class for easy import
 
 ---
 
 ### **Architecture Diagram**
 
-You can paste this directly into Markdown (works on GitHub):
-
-```mermaid
-graph TD
+```
     A[examples/main.py] --> B[wind_assess.core<br/>WindResource class]
     A --> C[wind_assess.utils<br/>Helper functions]
 
