@@ -50,15 +50,19 @@ def test_power_law_extrapolation():
     ds = make_synthetic_dataset()
     wr = WindResource(ds)
 
-    # Using dataset: u100 = 2, u10 = 1 → α should be ~ log(2)/log(100/10) = 1
     alpha = wr.estimate_alpha_at_point(55.65, 7.95)
-    assert abs(alpha - 1.0) < 0.1
 
-    # extrapolate using z_ref=100 → speed at 150m = 2 * (150/100)^α
+    # Correct expected value
+    expected_alpha = np.log10(2)  # ≈ 0.30103
+    assert abs(alpha - expected_alpha) < 0.01
+
     speed150 = wr.extrapolate_speed_power_law(
         lat=55.65, lon=7.95, z_target=150, z_ref=100
     )
-    assert speed150.values[0] > 2.9  # since α≈1, expected ≈3
+
+    # expected speed = 2 * (150/100)^alpha
+    expected_speed = 2 * (1.5 ** alpha)
+    assert abs(speed150.values[0] - expected_speed) < 0.05
 
 
 def test_weibull_fit():
@@ -70,7 +74,6 @@ def test_weibull_fit():
 
     assert k > 0
     assert A > 0
-
 
 def test_aep_computation():
     ds = make_synthetic_dataset()
