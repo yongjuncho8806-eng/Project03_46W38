@@ -1,22 +1,12 @@
-# Project03_46W38
-This is a submission of project 03
-
 # Project03_46W38 – Wind Resource Assessment Based on Reanalysis Data
 
 This repository contains my final project for **46W38 – Scientific Programming for Wind Energy**.
 
-# Brief Overfiew of the Module
-The goal is to develop a **Python module** for wind resource assessment at a specified site using **ERA5** reanalysis data. The module reads multi-year hourly wind data at 10 m and 100 m, interpolates it to the **Horns Rev 1** site, and provides tools to:
+## Brief Overview of the Module
 
-- compute wind speed and direction time series  
-- extrapolate wind to arbitrary heights using a power-law shear model  
-- fit Weibull distributions  
-- plot wind speed distributions and wind roses  
-- compute Annual Energy Production (AEP) for selected turbines (NREL 5 MW and NREL 15 MW)
+The wind_assess module provides a small, reusable toolkit for wind resource assessment based on ERA5 reanalysis data. It loads multi-year hourly wind fields at 10 m and 100 m, interpolates them to a user-defined site (here: Horns Rev 1), and computes key wind energy metrics such as wind speed and direction time series, Weibull statistics, wind roses, and Annual Energy Production (AEP) for selected turbines.
 
-The code is organized as a module inside `src/` with at least one class (`WindResource`) as required.
-
----
+The core of the module is the WindResource class, which wraps the ERA5 dataset and offers high-level methods for spatial interpolation, vertical extrapolation using a power-law wind profile, Weibull fitting, and AEP calculation using turbine power curves (NREL 5 MW and NREL 15 MW). Together with simple plotting utilities, the module reproduces a simplified industry-style wind resource workflow that can be run and extended from the provided example script.
 
 ## Repository structure
 
