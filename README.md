@@ -1,10 +1,11 @@
 # Project03_46W38
-this is a submission of project 03
+This is a submission of project 03
 
-# Project03_46W38 – Wind Resource Assessment Based on ERA5
+# Project03_46W38 – Wind Resource Assessment Based on Reanalysis Data
 
-This repository contains my final project for **46W38 – Scientific Programming for Wind Energy (DTU)**.
+This repository contains my final project for **46W38 – Scientific Programming for Wind Energy**.
 
+# Brief Overfiew of the Module
 The goal is to develop a **Python module** for wind resource assessment at a specified site using **ERA5** reanalysis data. The module reads multi-year hourly wind data at 10 m and 100 m, interpolates it to the **Horns Rev 1** site, and provides tools to:
 
 - compute wind speed and direction time series  
