@@ -8,6 +8,15 @@ The wind_assess module provides a small, reusable toolkit for wind resource asse
 
 The core of the module is the WindResource class, which wraps the ERA5 dataset and offers high-level methods for spatial interpolation, vertical extrapolation using a power-law wind profile, Weibull fitting, and AEP calculation using turbine power curves (NREL 5 MW and NREL 15 MW). Together with simple plotting utilities, the module reproduces a simplified industry-style wind resource workflow that can be run and extended from the provided example script.
 
+## Module Architecture
+
+The project follows a standard src-layout Python module structure.
+All core functionality is implemented inside the package wind_assess, located in:
+
+src/wind_assess/
+
+The module contains three main files:
+
 ## Repository structure
 
 ```text
