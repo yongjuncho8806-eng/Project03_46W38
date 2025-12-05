@@ -44,32 +44,33 @@ def main():
     wr = WindResource.from_files([str(p) for p in era5_files])
 
     # Time series at 100m for Horns Rev 1
+    # interpolate ERA5 u/v components horizontally to the Horns Rev 1 localtion
+    # get the wind speed and direction from u/v
+    # return hourly array for data range
     speed100, dir100 = wr.get_speed_direction_at_point(
-        HORNS_REV_LAT,
-        HORNS_REV_LON,
-        height=100,
+        HORNS_REV_LAT,      # latitde
+        HORNS_REV_LON,      # longitude
+        height=100,         # wind at chosen height of 100m
         start_year=1997,
         end_year=2008,
     )
 
-    print("100m speed mean [m/s]:", float(speed100.mean()))
-    print("100m direction mean [deg]:", float(dir100.mean()))
+    # Compute and print the summary 
+    print("Mean wind speed at 100m (m/s):", float(speed100.mean()))
+    print("Mean wind direction at 100m (deg):", float(dir100.mean()))
 
-    # --------------------------------------------------------------
-    # 3. Weibull fit for 100m speeds
-    # --------------------------------------------------------------
-    speeds_np = speed100.values.reshape(-1)
-    k, A = wr.fit_weibull_1d(speeds_np)
-    print(f"Weibull at 100m: k={k:.3f}, A={A:.3f} m/s")
+    # Weibull fit for 100m speeds
+    speeds_np = speed100.values.reshape(-1) # Convert speeds to flat NumPy array
+    k, A = wr.fit_weibull_1d(speeds_np)     # Fit Weibull distribution
+    print(f"Weibull at 100m: k={k:.3f}, A={A:.3f} m/s") # print Weibull
 
     fig1, ax1 = plt.subplots()
     plot_weibull_fit(speeds_np, k, A, ax=ax1)
     fig1.tight_layout()
     fig1.savefig(outputs / "weibull_100m_horns_rev.png", dpi=150)
 
-    # --------------------------------------------------------------
-    # 4. Wind rose at 100m (full period)
-    # --------------------------------------------------------------
+    # Wind rose at 100m (full period)
+
     dirs_np = dir100.values.reshape(-1)
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111, polar=True)
@@ -77,9 +78,8 @@ def main():
     fig2.tight_layout()
     fig2.savefig(outputs / "wind_rose_100m_horns_rev.png", dpi=150)
 
-    # --------------------------------------------------------------
-    # 5. AEP for NREL 5MW and 15MW at Horns Rev 1 for AEP_YEAR
-    # --------------------------------------------------------------
+    # AEP for NREL 5MW and 15MW at Horns Rev 1 for AEP_YEAR
+
     # 5MW: hub height ~90 m
     speed_bins_5, power_5 = load_power_curve_csv(str(pc_5mw))
     aep_5_mwh = wr.compute_aep_from_power_curve(
