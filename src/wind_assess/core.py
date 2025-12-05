@@ -1,16 +1,13 @@
 """
-wind_assess.core
-
-Core tools for ERA5-based wind resource assessment at Horns Rev 1 (or any
-location inside the 2x2 ERA5 grid).
+Core module for ERA5-based wind resource assessment
 
 Functionalities:
-- Load and parse multiple NetCDF ERA5 files
+- Load and parse multiple ERA5 files
 - Compute wind speed and direction from u/v
 - Interpolate time series at 10m and 100m for a given location
 - Extrapolate wind speed to arbitrary height using power law
-- Fit Weibull distribution for wind speed at given location/height/years
-- Compute AEP for NREL 5MW / 15MW (or any turbine power curve)
+- Fit Weibull distribution for wind speed 
+- Compute AEP for NREL 5MW / 15MW 
 """
 
 from __future__ import annotations
@@ -22,72 +19,41 @@ import numpy as np
 import xarray as xr
 from scipy.stats import weibull_min
 
-
 @dataclass
 class WindResource:
-    """
-    Container for ERA5 data and wind resource methods.
 
-    Attributes
-    ----------
-    ds : xarray.Dataset
-        ERA5 dataset with variables:
-        - u10, v10, u100, v100
-        - coordinates: time, latitude, longitude
-    """
-    ds: xr.Dataset
+    # Main class storing ERA5 data and providing wind resource methods.
+   
+    ds: xr.Dataset  # ERA 5 dataset with variables u10, v10, u100, v100, lat, log, time
 
-    # ------------------------------------------------------------------
-    # Construction helpers
-    # ------------------------------------------------------------------
+    # Load ERA5 data
     @classmethod
     def from_files(cls, filepaths: Sequence[str]) -> "WindResource":
         """
-        Load multiple NetCDF files and merge them along the time dimension.
+        Load multiple ERA5 files and merge them along time
 
         Parameters
-        ----------
-        filepaths : list of str
-            Paths to NetCDF4 files, e.g.
-            ["inputs/1997-1999.nc", "inputs/2000-2002.nc", ...]
-
-        Returns
-        -------
-        WindResource
+        filepaths : list of str Paths to NetCDF4 files 1997 - 2008
+        Returns WindResource
         """
-        ds = xr.open_mfdataset(
-            filepaths,
-            combine="by_coords",
-        )
+        ds = xr.open_mfdataset(filepaths, combine="by_coords")
         return cls(ds)
 
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
+    # Internal utilities
     def _subset_years(self, start_year: int, end_year: int) -> xr.Dataset:
-        """
-        Select a time subset between start_year and end_year (inclusive).
-        """
+
+        # Select a time subset between start_year and end_year (inclusive).
         start = f"{start_year}-01-01"
-        end = f"{end_year}-12-31T23:00"
+        end = f"{end_year}-12-31T23:00" # inclusive of the last hour
         return self.ds.sel(time=slice(start, end))
 
-    def _interp_point(
-        self,
-        ds: xr.Dataset,
-        lat: float,
-        lon: float,
-    ) -> xr.Dataset:
-        """
-        Interpolate the dataset to a single (lat, lon) point.
+    def _interp_point(self, ds: xr.Dataset, lat: float, lon: float) -> xr.Dataset:
 
-        Uses bilinear interpolation on the 2x2 ERA5 grid.
-        """
+        # Interpolate the dataset to a single (lat, lon) point.
+        # Uses bilinear interpolation on the 2x2 ERA5 grid.
         return ds.interp(latitude=lat, longitude=lon)
 
-    # ------------------------------------------------------------------
     # Basic speed / direction
-    # ------------------------------------------------------------------
     @staticmethod
     def _speed_dir_from_uv(u: xr.DataArray, v: xr.DataArray) -> Tuple[xr.DataArray, xr.DataArray]:
         """
