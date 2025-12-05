@@ -1,13 +1,7 @@
-"""
-examples/main.py
 
-Demonstration script for the Project03_46W38 wind resource module.
-
-Run from repo root with:
-    python -m examples.main
-or:
-    python examples/main.py
-"""
+#adding project root/src folder to python path so the wind_assess module can be
+#imported when running main.py 
+#run with python -m examples.main
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
@@ -15,25 +9,25 @@ sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
 import matplotlib.pyplot as plt
 
+#import WindResource class and helper functions from the wind_assess module
 from wind_assess.core import WindResource
 from wind_assess.utils import load_power_curve_csv, plot_weibull_fit, plot_wind_rose
 
+# Define project paths (locate inputs & save outputs)
+ROOT = Path(__file__).resolve().parents[1]  # project root directory
+inputs = ROOT / "inputs"                    # input folder 
+outputs = ROOT / "outputs"                  # output folder
+outputs.mkdir(exist_ok=True)                # create if output folder is missing
 
-# ----------------------------------------------------------------------
-# Paths (adjust if needed)
-# ----------------------------------------------------------------------
-ROOT = Path(__file__).resolve().parents[1]
-inputs = ROOT / "inputs"
-outputs = ROOT / "outputs"
-outputs.mkdir(exist_ok=True)
-
-era5_files = [
+# ERA5 input files
+era5_files =[
     inputs / "1997-1999.nc",
     inputs / "2000-2002.nc",
     inputs / "2003-2005.nc",
     inputs / "2006-2008.nc",
 ]
 
+#Turbine power curves 
 pc_5mw = inputs / "NREL_Reference_5MW_126.csv"
 pc_15mw = inputs / "NREL_Reference_15MW_240.csv"
 
