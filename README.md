@@ -1,105 +1,106 @@
 # Project03_46W38 – Wind Resource Assessment Based on Reanalysis Data
-
 This repository contains my final project for **46W38 – Scientific Programming for Wind Energy**.
 
 ## Brief Overview of the Module
+The wind_assess module provides tools to:
+-    load multi-year ERA5 wind data (10 m and 100 m)
+-    compute wind speed and wind direction time series
+-    interpolate ERA5 data to any point inside the 2×2 grid
+-    extrapolate wind to arbitrary heights using a power-law wind profile
+-    fit Weibull distributions to wind speed data
+-    plot wind roses and Weibull curves
+-    compute Annual Energy Production (AEP) from turbine power curves (NREL 5 MW and NREL 15 MW)
 
-The wind_assess module provides a small, reusable toolkit for wind resource assessment based on ERA5 reanalysis data. It loads multi-year hourly wind fields at 10 m and 100 m, interpolates them to a user-defined site (here: Horns Rev 1), and computes key wind energy metrics such as wind speed and direction time series, Weibull statistics, wind roses, and Annual Energy Production (AEP) for selected turbines.
-
-The core of the module is the WindResource class, which wraps the ERA5 dataset and offers high-level methods for spatial interpolation, vertical extrapolation using a power-law wind profile, Weibull fitting, and AEP calculation using turbine power curves (NREL 5 MW and NREL 15 MW). Together with simple plotting utilities, the module reproduces a simplified industry-style wind resource workflow that can be run and extended from the provided example script.
+The main entry point is the WindResource class, which wraps the ERA5 dataset and implements all core analysis steps. The examples/main.py script demonstrates a complete workflow from loading data to producing plots and calculating AEP.
 
 ## Module Architecture
-
-The project follows a standard *src-layout* Python module structure.
-All core functionality is implemented inside the package `wind_assess`, located in:
+The project follows the following src/ layout:
 
 ```
-src/wind_assess/
+src/
+ └── wind_assess/
+      ├── __init__.py
+      ├── core.py
+      └── utils.py
 ```
 
-The module contains three main files:
+### **core.py** – Main Functionality
+Contains the WindResource class, which provides:
 
-### **1. `core.py`**
+-    ERA5 file loading
+-    wind speed & direction computation (from u/v)
+-    vertical power-law extrapolation
+-    Weibull parameter fitting
+-    AEP calculation using turbine power curves
 
-Defines the `WindResource` class, which loads ERA5 files and provides methods for:
+### **utils.py** – Helper Functions
+Includes:
 
-* parsing u/v components into wind speed and direction
-* spatial interpolation inside the 2×2 ERA5 grid
-* vertical wind extrapolation using power-law shear
-* Weibull distribution fitting
-* AEP calculation using turbine power curves
+-    turbine power curve CSV loading
+-    Weibull PDF plotting
+-    wind rose plotting
 
-### **2. `utils.py`**
+### **__init__.py**
+Exposes the WindResource class for simple importing.
 
-Contains helper functions:
-
-* loading power curve CSV files
-* plotting Weibull distributions
-* plotting wind roses
-
-### **3. `__init__.py`**
-
-Exposes the main class for easy import
-
----
-
-### **Architecture Diagram**
+## Architecture Diagram
 
 ```
-    A[examples/main.py] --> B[wind_assess.core<br/>WindResource class]
-    A --> C[wind_assess.utils<br/>Helper functions]
-
-    B --> D[ERA5 NetCDF files<br/>(1997–2008)]
-    B --> E[Turbine power curves<br/>NREL 5MW & 15MW]
-
-    B --> F[Computed outputs<br/>Weibull params, AEP]
-    A --> G[Plots<br/>(Weibull, Wind Rose)]
+examples/main.py
+     |
+wind_assess.core (WindResource)
+     |
+     |- Load ERA5 NetCDF files
+     |- Interpolate to site coordinates
+     |- Extrapolate wind to hub height
+     |- Fit Weibull distribution
+     |- Compute AEP from power curves
+     |
+wind_assess.utils
+     |- Load power curve CSVs
+     |- Plot Weibull fit
+     |- Plot wind rose
 ```
 
----
+## Class Description
 
-### **High-Level Data Flow**
+### **WindResource (in src/wind_assess/core.py)**
 
-1. **`examples/main.py`** calls the `WindResource` class.
-2. `WindResource` loads ERA5 data using xarray.
-3. The class interpolates wind fields to the site (Horns Rev).
-4. The user chooses a height → wind is extrapolated if necessary.
-5. Weibull parameters are fitted from the time series.
-6. AEP is calculated from the power curve.
-7. Plots (Weibull + wind rose) are produced using functions in `utils.py`.
+Method	                            Description
+from_files()	                    Loads and merges multiple ERA5 NetCDF files
+get_speed_direction_at_point()	    Computes wind speed and direction at 10 m or 100 m
+estimate_alpha_at_point()	        Estimates power-law shear exponent
+extrapolate_speed_power_law()	    Extrapolates wind speed to any height
+fit_weibull_1d()	                Fits Weibull distribution (k, A)
+fit_weibull_at_point()	            Weibull fit at any height/location
+compute_aep_from_power_curve()	    Computes annual energy production
 
----
+## Repository Structure
 
-## Repository structure
-
-```text
+```
 Project03_46W38/
-├── inputs/
-│   ├── 1997-1999.nc
-│   ├── 2000-2002.nc
-│   ├── 2003-2005.nc
-│   ├── 2006-2008.nc
-│   ├── NREL_Reference_5MW_126.csv
-│   └── NREL_Reference_15MW_240.csv
-├── outputs/
-│   ├── weibull_100m_horns_rev.png        # generated by examples/main.py
-│   └── wind_rose_100m_horns_rev.png      # generated by examples/main.py
-├── src/
-│   └── wind_assess/
-│       ├── __init__.py
-│       ├── core.py
-│       └── utils.py
-├── examples/
-│   └── main.py
-├── tests/
-│   └── ... (pytest test files)
-├── .gitignore
-├── LICENSE
-└── README.md
-
-inputs/ – Provided ERA5 NetCDF4 files and turbine power curve CSVs.
-outputs/ – Figures and other results generated by the example script.
-src/wind_assess/ – The actual Python module (code to be imported).
-examples/ – Example script showing how to use the module.
-tests/ – Unit tests for the module (pytest).
+|- inputs/
+    |- 1997-1999.nc
+    |- 2000-2002.nc
+    |- 2003-2005.nc
+    |- 2006-2008.nc
+    |- NREL_Reference_5MW_126.csv
+    |- NREL_Reference_15MW_240.csv                     
+|- outputs/
+    |- weibull_100m_horns_rev.png
+    |- wind_rose_100m_horns_rev.png             
+|- src/
+    |- wind_assess/
+        |- __init__.py
+        |- core.py
+        |- utils.py      
+|- examples/
+    |- main.py            
+|- tests/
+    |- test_core.py
+    |- test_utils.py                    
+|- LICENSE
+|- README.md
+|- Project03_46W38_S253940 Final Report.docx
+```
 
