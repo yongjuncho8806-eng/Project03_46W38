@@ -13,6 +13,16 @@ The wind_assess module provides tools to:
 
 The main entry point is the WindResource class, which wraps the ERA5 dataset and implements all core analysis steps. The examples/main.py script demonstrates a complete workflow from loading data to producing plots and calculating AEP.
 
+## How to run the Module
+for the main project run:
+```
+python -m examples.main    
+```
+for testing:
+```
+pytest --cov=src tests/
+```
+
 ## Module Architecture
 The project follows the following src/ layout:
 
