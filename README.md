@@ -18,10 +18,10 @@ The project follows the following src/ layout:
 
 ```
 src/
- └── wind_assess/
-      ├── __init__.py
-      ├── core.py
-      └── utils.py
+ |- wind_assess/
+      |- __init__.py
+      |- core.py
+      |- utils.py
 ```
 
 ### **core.py** – Main Functionality
@@ -44,7 +44,6 @@ Includes:
 Exposes the WindResource class for simple importing.
 
 ## Architecture Diagram
-
 ```
 examples/main.py
      |
@@ -63,20 +62,17 @@ wind_assess.utils
 ```
 
 ## Class Description
-
-### **WindResource (in src/wind_assess/core.py)**
-
+### **WindResource (src/wind_assess/core.py)**
 Method	                            Description
-from_files()	                    Loads and merges multiple ERA5 NetCDF files
-get_speed_direction_at_point()	    Computes wind speed and direction at 10 m or 100 m
-estimate_alpha_at_point()	        Estimates power-law shear exponent
-extrapolate_speed_power_law()	    Extrapolates wind speed to any height
-fit_weibull_1d()	                Fits Weibull distribution (k, A)
-fit_weibull_at_point()	            Weibull fit at any height/location
-compute_aep_from_power_curve()	    Computes annual energy production
+from_files()	                  ->  Loads and merges multiple ERA5 NetCDF files
+get_speed_direction_at_point() ->	 Computes wind speed and direction at 10 m or 100 m
+estimate_alpha_at_point()      ->	 Estimates power-law shear exponent
+extrapolate_speed_power_law()	 ->  Extrapolates wind speed to any height
+fit_weibull_1d()	              ->  Fits Weibull distribution (k, A)
+fit_weibull_at_point()	        ->  Weibull fit at any height/location
+compute_aep_from_power_curve()	->  Computes annual energy production
 
 ## Repository Structure
-
 ```
 Project03_46W38/
 |- inputs/
