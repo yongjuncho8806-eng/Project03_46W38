@@ -59,57 +59,58 @@ def main():
     print("Mean wind speed at 100m (m/s):", float(speed100.mean()))
     print("Mean wind direction at 100m (deg):", float(dir100.mean()))
 
-    # Weibull fit for 100m speeds
+    # Weibull fit for 100m wind speed
     speeds_np = speed100.values.reshape(-1) # Convert speeds to flat NumPy array
     k, A = wr.fit_weibull_1d(speeds_np)     # Fit Weibull distribution
     print(f"Weibull at 100m: k={k:.3f}, A={A:.3f} m/s") # print Weibull
 
+    # Plot Histogram + fitted weibull distribution curve
     fig1, ax1 = plt.subplots()
     plot_weibull_fit(speeds_np, k, A, ax=ax1)
     fig1.tight_layout()
-    fig1.savefig(outputs / "weibull_100m_horns_rev.png", dpi=150)
+    fig1.savefig(outputs / "weibull_100m_horns_rev.png", dpi=150)   # save to output
 
-    # Wind rose at 100m (full period)
-
-    dirs_np = dir100.values.reshape(-1)
+    # Wind rose at 100m Direction 
+    dirs_np = dir100.values.reshape(-1)     # Convert Dir to flat Numpy array
+    
+    # Create polar coordinate figure for the wind rose
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111, polar=True)
-    plot_wind_rose(dirs_np, ax=ax2, n_sectors=16)
+
+    # Plot wind rose 
+    plot_wind_rose(dirs_np, ax=ax2, n_sectors=16)   # 16 dir sectors 
     fig2.tight_layout()
-    fig2.savefig(outputs / "wind_rose_100m_horns_rev.png", dpi=150)
+    fig2.savefig(outputs / "wind_rose_100m_horns_rev.png", dpi=150) # save to output
 
-    # AEP for NREL 5MW and 15MW at Horns Rev 1 for AEP_YEAR
-
-    # 5MW: hub height ~90 m
+    # AEP Calc for NREL 5MW and 15MW at Horns Rev 1 for AEP_YEAR
+    # 5MW at 90m HH
     speed_bins_5, power_5 = load_power_curve_csv(str(pc_5mw))
     aep_5_mwh = wr.compute_aep_from_power_curve(
         lat=HORNS_REV_LAT,
         lon=HORNS_REV_LON,
-        hub_height=90.0,
+        hub_height=90.0,        #HH of 90m
         speed_bins=speed_bins_5,
         power_kw=power_5,
         year=AEP_YEAR,
         availability=1.0,
     )
 
-    # 15MW: hub height ~150 m
+    # 15MW at 150m HH
     speed_bins_15, power_15 = load_power_curve_csv(str(pc_15mw))
     aep_15_mwh = wr.compute_aep_from_power_curve(
         lat=HORNS_REV_LAT,
         lon=HORNS_REV_LON,
-        hub_height=150.0,
+        hub_height=150.0,       # HH of 150m
         speed_bins=speed_bins_15,
         power_kw=power_15,
         year=AEP_YEAR,
         availability=1.0,
     )
 
-    print(f"AEP {AEP_YEAR} - NREL 5MW @ Horns Rev:  {aep_5_mwh:.1f} MWh")
-    print(f"AEP {AEP_YEAR} - NREL 15MW @ Horns Rev: {aep_15_mwh:.1f} MWh")
+    # print AEP using two WTGs at 2002 
+    print(f"AEP of {AEP_YEAR} with NREL 5MW:  {aep_5_mwh:.2f} MWh")
+    print(f"AEP of {AEP_YEAR} with NREL 15MW: {aep_15_mwh:.2f} MWh")
 
-    # Optionally show plots interactively during development
-    # plt.show()
-
-
+#   Python entry point
 if __name__ == "__main__":
     main()
