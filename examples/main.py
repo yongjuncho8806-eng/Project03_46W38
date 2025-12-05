@@ -1,7 +1,7 @@
 
 #adding project root/src folder to python path so the wind_assess module can be
 #imported when running main.py 
-#run with python -m examples.main
+#run with: python -m examples.main
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
@@ -31,23 +31,19 @@ era5_files =[
 pc_5mw = inputs / "NREL_Reference_5MW_126.csv"
 pc_15mw = inputs / "NREL_Reference_15MW_240.csv"
 
-# Horns Rev 1 approximate coordinates
-HORNS_REV_LAT = 55.5297
-HORNS_REV_LON = 7.9061
+# Horns Rev 1 coordinates
+HORNS_REV_LAT = 55.5297     #55°31′47″N 
+HORNS_REV_LON = 7.9061      #7°54′22″E
 
-# Year for AEP example (must be within 1997–2008)
-AEP_YEAR = 2005
-
+AEP_YEAR = 2002             #example year
 
 def main():
-    # --------------------------------------------------------------
-    # 1. Load ERA5 data
-    # --------------------------------------------------------------
+    # Loading ERA5 data
+    # used .from_files method to load multiple files and merge them into a single 
+    # xarray .Dataset containing u10, v10, u100, and v100. 
     wr = WindResource.from_files([str(p) for p in era5_files])
 
-    # --------------------------------------------------------------
-    # 2. Time series at 100m for Horns Rev 1 (full period)
-    # --------------------------------------------------------------
+    # Time series at 100m for Horns Rev 1
     speed100, dir100 = wr.get_speed_direction_at_point(
         HORNS_REV_LAT,
         HORNS_REV_LON,
