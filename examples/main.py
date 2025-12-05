@@ -1,7 +1,11 @@
+"""
+run with: 
 
-#adding project root/src folder to python path so the wind_assess module can be
-#imported when running main.py 
-#run with: python -m examples.main
+python -m examples.main
+"""
+
+# adding project root/src folder to python path so the wind_assess module can be
+# imported when running main.py 
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
@@ -9,7 +13,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
 import matplotlib.pyplot as plt
 
-#import WindResource class and helper functions from the wind_assess module
+# import WindResource class and helper functions from the wind_assess module
 from wind_assess.core import WindResource
 from wind_assess.utils import load_power_curve_csv, plot_weibull_fit, plot_wind_rose
 
